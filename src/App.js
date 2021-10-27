@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, MemoryRouter, Switch, Route } from "react-router-dom";
 import Favorites from "./Components/Favorites";
 import Gallery from "./Components/Gallery";
 import Header from "./Components/Header";
@@ -47,7 +47,7 @@ function App() {
   }
   return (
     <div className="App">
-      <BrowserRouter>
+      <MemoryRouter>
         <Header />
         <Switch>
           <Route exact path="/">
@@ -60,7 +60,7 @@ function App() {
             <Favorites favorites={favorites} removeFavorite={removeFavorite} />
           </Route>
         </Switch>
-      </BrowserRouter>
+      </MemoryRouter>
     </div>
   );
 }
