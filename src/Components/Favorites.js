@@ -1,13 +1,21 @@
 import React from "react";
+import { removeFavorite } from "../reduxToolkit/sliceFavorites";
 
-function Favorites({ favorites, removeFavorite }) {
+import { useSelector, useDispatch } from "react-redux";
+
+function Favorites() {
+  const { favorites } = useSelector((state) => state.favorites);
+  const dispatch = useDispatch();
+
   return (
     <div className="favorites">
       {favorites.map((el, i) => (
         <div key={i} className="favorite_card">
           <img alt="alternative" src={el.thumbnailUrl} />
           <button
-            onClick={() => removeFavorite(favorites[i].id, favorites[i].id)}
+            onClick={() => {
+              dispatch(removeFavorite(el.id));
+            }}
           >
             Delete
           </button>

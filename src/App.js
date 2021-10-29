@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
-import { BrowserRouter, MemoryRouter, Switch, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { MemoryRouter, Switch, Route } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { getData } from "./reduxToolkit/slice";
 import Favorites from "./Components/Favorites";
 import Gallery from "./Components/Gallery";
 import Header from "./Components/Header";
@@ -7,24 +9,12 @@ import Album from "./Components/Album";
 import "./index.css";
 
 function App() {
-  const state = () => {
-    const savedFavorites = localStorage.getItem("favorites");
-    if (savedFavorites) {
-      return JSON.parse(savedFavorites);
-    } else {
-      return [];
-    }
-  };
-  let [data, setData] = useState([]);
-  let [favorites, setFavorites] = useState(state);
+  const { data } = useSelector((state) => state.data);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/photos").then((res) =>
-      res.json().then((data) => setData(groupBy("albumId")(data)))
-    );
-
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
+    dispatch(getData());
+  }, [dispatch]);
 
   function groupBy(key) {
     return function group(arr) {
@@ -36,28 +26,21 @@ function App() {
       }, []);
     };
   }
-  function getFavorite(id, albumId) {
-    let newFavorite = data[albumId].find((el) => el.id === id);
-    setFavorites([...favorites, newFavorite]);
-  }
+  const sortedData = groupBy("albumId")(data);
 
-  function removeFavorite(i, id) {
-    let newFavorite = favorites.filter((el) => el.id !== id);
-    setFavorites(newFavorite);
-  }
   return (
     <div className="App">
       <MemoryRouter>
         <Header />
         <Switch>
           <Route exact path="/">
-            <Gallery data={data} />
+            <Gallery data={sortedData} />
           </Route>
           <Route path="/gallery/:id">
-            <Album getFavorite={getFavorite} />
+            <Album />
           </Route>
           <Route path="/favorites">
-            <Favorites favorites={favorites} removeFavorite={removeFavorite} />
+            <Favorites />
           </Route>
         </Switch>
       </MemoryRouter>
